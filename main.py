@@ -1,12 +1,15 @@
 from os import environ
 import praw, pprint
 
+SUBR = "cs510bottesting" #environ['SUBREDDIT']
+oldPosts = set()    # post IDs that have been addressed already
+# DO COMMIT THIS
+
 USERNAME = environ['BOT_USERNAME']
 PASSWORD = environ['BOT_PASSWORD']
 CLIENT_ID = environ['BOT_CLIENT_ID']
 CLIENT_SECRET = environ['BOT_CLIENT_SECRET']
-oldPosts = set()    # posts that have been addressed already
-SUBR = "cs510bottesting" #environ['SUBREDDIT']
+
 
 # reddit API
 def getRedditInstance():
@@ -28,10 +31,19 @@ def getNewImagePosts(red):
     newPosts = []
     subRedInstance = red.subreddit(SUBR)
     for post in subRedInstance.new():
-        if (post not in oldPosts) and (isImageLink(post)):
+        if (post.name not in oldPosts) and (isImageLink(post)):
             newPosts.append(post)
     return newPosts
 
+# takes the new posts and does some logic with them
+def processNewPosts(posts):
+    for post in posts:
+        url = post.url
+        # TODO logic
+        print(url)
+        oldPosts.add(post.name)
+
 r = getRedditInstance()
-print(getNewImagePosts(r))
+np = getNewImagePosts(r)
+processNewPosts(np)
 print(oldPosts)
