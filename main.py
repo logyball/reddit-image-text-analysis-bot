@@ -1,1 +1,3 @@
-# here is where the main logic will go
+import praw
+
+# reddit API
