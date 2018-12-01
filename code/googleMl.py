@@ -2,6 +2,7 @@ from google.cloud import vision, language
 from google.cloud.language import enums
 from google.cloud.language import types
 import six
+import pprint
 
 def mapTextToEmotion(sentiment):
     return ["happy"] #TODO
@@ -12,6 +13,7 @@ def googleTextAnalysis(text):
         text = text.decode('utf-8')
     document = types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT, language='en')
     sentiment = client.analyze_sentiment(document).document_sentiment
+    pprint.pprint(sentiment)
     return mapTextToEmotion(sentiment)
 
 def googleImageAnalysis(url):
