@@ -1,4 +1,5 @@
 from os import environ
+from googleMl import googleTextAnalysis, googleImageAnalysis
 import praw, pprint
 
 SUBR = "cs510bottesting" #environ['SUBREDDIT']
@@ -37,12 +38,6 @@ def getNewTextOrImagePosts(red):
             if postType is not None:
                 newPosts.append((post, postType))
     return newPosts
-
-def googleTextAnalysis(contentString):
-    return []
-
-def googleImageAnalysis(url):
-    return []
 
 # returns list of strings, best guess info based on the 
 # google ML APIs.  Image gets descriptors, text gets tone
