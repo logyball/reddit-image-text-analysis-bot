@@ -4,42 +4,37 @@ from google.cloud.language import types
 import six
 import pprint
 
-def addMag(tone, mag):
+def addMag(mag):
     if (mag <= 0.1):
-        tone.append('weakly')
+        return "weakly"
     elif (mag <= 0.35):
-        tone.append('moderately')
+        return "moderately"
     elif (mag <= 0.5):
-        tone.append('aggressively')
+        return "aggressively"
     else:
-        tone.append('overwhelmingly')
+        return "overwhelmingly"
 
 def mapTextToEmotion(sentiment):
     tone = []
     score = sentiment.score
     mag = sentiment.magnitude
+    tone.append(addMag(mag))
     # very negative
     if score < -0.6:
-        addMag(tone, mag)
         tone.append('miserable')
     # weakly negative
     elif score < -0.1:
-        addMag(tone, mag)
         tone.append('negative')
     # nuetral
     elif score < 0.1:
-        addMag(tone, mag)
         tone.append('nuetral')
     # weakly postiive
     elif score < 0.6:
-        addMag(tone, mag)
         tone.append('positive')
     # very positive
     else:
-        addMag(tone, mag)
         tone.append('ecstatic')
     return tone
-    
 
 def googleTextAnalysis(text):
     client = language.LanguageServiceClient()
@@ -47,7 +42,6 @@ def googleTextAnalysis(text):
         text = text.decode('utf-8')
     document = types.Document(content=text, type=enums.Document.Type.PLAIN_TEXT, language='en')
     sentiment = client.analyze_sentiment(document).document_sentiment
-    pprint.pprint(sentiment)
     return mapTextToEmotion(sentiment)
 
 def googleImageAnalysis(url):
@@ -59,5 +53,4 @@ def googleImageAnalysis(url):
     labelDesc = []
     for label in labels:
         labelDesc.append(label.description)
-        print(label.description)
     return labelDesc

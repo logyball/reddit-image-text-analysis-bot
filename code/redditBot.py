@@ -33,7 +33,7 @@ def getNewTextOrImagePosts(red):
     subRedInstance = red.subreddit(SUBR)
     for post in subRedInstance.new():
         #pprint.pprint(vars(post))
-        if (post.id not in oldPosts):
+        if (post.name not in oldPosts):
             postType = isImageOrText(post)
             if postType is not None:
                 newPosts.append((post, postType))
@@ -55,17 +55,27 @@ def processNewPosts(posts):
         postInfo = {}
         postInfo['type'] = post[1]
         postInfo['title'] = post[0].title
+        postInfo['id'] = post[0].id
         postInfo['url'] = post[0].url
         postInfo['wordList'] = googleMlWrapper(post)
-        postsToSend[post[0].id] = postInfo
-        oldPosts.add(post[0].id)
+        postsToSend[post[0].name] = postInfo
+        oldPosts.add(post[0].name)
     return postsToSend
 
-# main logic
+# TODO - implement a reply based on the info we have post-processing
+def buildReply(postInfo):
+    reply = "these are some interesting words:"
+    for w in postInfo['wordList']:
+        reply = reply + " " + w
+    return reply
+    # TODO - incoporate additional logic
+
+# initial logic
 #   Called from outside the module, gets an instance of reddit,
 #   patrols the subreddit for new posts, then processes them
 #   and returns a dict of postID -> {
-#                                       'type': 'image' or 'text',
+#                                       'type': 'img' or 'txt',
+#                                       'title: post title
 #                                       'url': url,
 #                                       'wordList': [list of descriptors]
 #                                   }
@@ -76,5 +86,12 @@ def getNewPostInfo():
     np = getNewTextOrImagePosts(r)
     return processNewPosts(np)
 
-d = getNewPostInfo()
-pprint.pprint(d)
+# followUp logic
+#   After all the proocessing of each post, post a reply to each 
+#   thread based on the post-processed info
+def makeReply(postsToReplyTo):
+    r = getRedditInstance() # in case we forgot
+    for post in postsToReplyTo:
+        text = buildReply(postsToReplyTo[post])
+        sub = r.submission(id=postsToReplyTo[post]['id'])
+        sub.reply(text)
