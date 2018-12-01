@@ -4,8 +4,42 @@ from google.cloud.language import types
 import six
 import pprint
 
+def addMag(tone, mag):
+    if (mag <= 0.1):
+        tone.append('weakly')
+    elif (mag <= 0.35):
+        tone.append('moderately')
+    elif (mag <= 0.5):
+        tone.append('aggressively')
+    else:
+        tone.append('overwhelmingly')
+
 def mapTextToEmotion(sentiment):
-    return ["happy"] #TODO
+    tone = []
+    score = sentiment.score
+    mag = sentiment.magnitude
+    # very negative
+    if score < -0.6:
+        addMag(tone, mag)
+        tone.append('miserable')
+    # weakly negative
+    elif score < -0.1:
+        addMag(tone, mag)
+        tone.append('negative')
+    # nuetral
+    elif score < 0.1:
+        addMag(tone, mag)
+        tone.append('nuetral')
+    # weakly postiive
+    elif score < 0.6:
+        addMag(tone, mag)
+        tone.append('positive')
+    # very positive
+    else:
+        addMag(tone, mag)
+        tone.append('ecstatic')
+    return tone
+    
 
 def googleTextAnalysis(text):
     client = language.LanguageServiceClient()
