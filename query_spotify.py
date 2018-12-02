@@ -9,6 +9,8 @@ CLIENT_SECRET = 'de9d83475e2b4f3897e8be424d26a6f7'
 #client_secret=environ[CLIENT_SECRET]
 
 def get_a_playlist(query):
+    #This function will return a link to a spotify playlist given query parmaters
+    #A random integer is generated to ensure that a different link is given with the same query
     offset = random.randint(1,20)
     credentials = SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=CLIENT_SECRET)
     spotify = spotipy.Spotify(client_credentials_manager=credentials)
