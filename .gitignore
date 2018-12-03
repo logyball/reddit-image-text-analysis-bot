@@ -1,2 +1,3 @@
 secrets.*
 service-account.json
+venv/*
