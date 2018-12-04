@@ -82,7 +82,10 @@ def googleMlWrapper(postData):
 # newPosts is a list of posts, posts is a tuple
 # (post Object, postType String)
 def processNewPosts(posts):
-    addBotAction("New posts found! Processing...")
+    if len(posts) > 0:
+        addBotAction("New posts found! Processing...")
+    else:
+        return {}
     postsToSend = {}
     for post in posts:
         postInfo = {}
