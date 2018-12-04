@@ -24,5 +24,6 @@ while(1):
     #
     #   TODO - some intermediate logic
     #
-    redditBot.makeReply(postDict)
+    if len(postDict) > 0:
+        redditBot.makeReply(postDict)
     sleep(60)
