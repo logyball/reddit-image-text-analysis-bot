@@ -1,9 +1,10 @@
 from os import environ
 from googleMl import googleTextAnalysis, googleImageAnalysis
-import praw, pprint
+from time import time
+import praw, pprint, sqlite3
 
 SUBR = "cs510bottesting" #environ['SUBREDDIT']
-oldPosts = set()    # post IDs that have been addressed already
+DB_FILE = 'botData.db' # environ['DB_FILE']
 
 USERNAME = environ['BOT_USERNAME']
 PASSWORD = environ['BOT_PASSWORD']
@@ -26,14 +27,42 @@ def isImageOrText(post):
         return "img"
     return None
 
+# add the bot's action at a time to the db
+def addBotAction(action):
+    connection = sqlite3.connect(DB_FILE)
+    cursor = connection.cursor()
+    intTime = int(time())
+    cursor.execute("insert into botActions(actionTime, action) VALUES (?, ?)", (intTime, action))
+    connection.commit()
+    cursor.close()
+
+# returns true if post is already in database
+def isOldPost(postId):
+    connection = sqlite3.connect(DB_FILE)
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM processedPosts WHERE postName = '%s'" % postId)
+    row = cursor.fetchone()
+    if row is not None:
+        cursor.close()
+        return True
+    cursor.close()
+    return False
+
+# adds a processed post to the db
+def addToOldPosts(postId):
+    connection = sqlite3.connect(DB_FILE)
+    cursor = connection.cursor()
+    cursor.execute("insert into processedPosts(postName) VALUES (?)", (postId,))
+    connection.commit()
+    cursor.close()
+
 # returns a list of image posts that haven't been visited yet in 
 # the specified subreddit
 def getNewTextOrImagePosts(red):
     newPosts = []
     subRedInstance = red.subreddit(SUBR)
     for post in subRedInstance.new():
-        #pprint.pprint(vars(post))
-        if (post.name not in oldPosts):
+        if not isOldPost(post.name):
             postType = isImageOrText(post)
             if postType is not None:
                 newPosts.append((post, postType))
@@ -59,7 +88,7 @@ def processNewPosts(posts):
         postInfo['url'] = post[0].url
         postInfo['wordList'] = googleMlWrapper(post)
         postsToSend[post[0].name] = postInfo
-        oldPosts.add(post[0].name)
+        addToOldPosts(post[0].name)
     return postsToSend
 
 # TODO - implement a reply based on the info we have post-processing
