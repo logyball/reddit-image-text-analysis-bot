@@ -59,6 +59,7 @@ def addToOldPosts(postId):
 # returns a list of image posts that haven't been visited yet in 
 # the specified subreddit
 def getNewTextOrImagePosts(red):
+    addBotAction("scanning for new posts...")
     newPosts = []
     subRedInstance = red.subreddit(SUBR)
     for post in subRedInstance.new():
@@ -72,13 +73,16 @@ def getNewTextOrImagePosts(red):
 # google ML APIs.  Image gets descriptors, text gets tone
 def googleMlWrapper(postData):
     if postData[1] == "txt":
+        addBotAction("Sending new text post to google NLP ML API...")
         return googleTextAnalysis(postData[0].selftext)
+    addBotAction("Sending new image post to google vision ML API...")
     return googleImageAnalysis(postData[0].url)
 
 # takes the new posts and does some logic with them
 # newPosts is a list of posts, posts is a tuple
 # (post Object, postType String)
 def processNewPosts(posts):
+    addBotAction("New posts found! Processing...")
     postsToSend = {}
     for post in posts:
         postInfo = {}
@@ -120,7 +124,9 @@ def getNewPostInfo():
 #   thread based on the post-processed info
 def makeReply(postsToReplyTo):
     r = getRedditInstance() # in case we forgot
+    addBotAction("Replying to new posts...")
     for post in postsToReplyTo:
         text = buildReply(postsToReplyTo[post])
         sub = r.submission(id=postsToReplyTo[post]['id'])
         sub.reply(text)
+    addBotAction("Done Replying! Going back to sleep...")
