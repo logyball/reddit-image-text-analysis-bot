@@ -18,4 +18,4 @@ def get_a_playlist(query):
     link = results['playlists']['items'][0]['external_urls']['spotify']
     return link
 
-print(get_a_playlist('nervous'))
+
