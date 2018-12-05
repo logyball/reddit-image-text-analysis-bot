@@ -1,3 +1,4 @@
 secrets.*
 service-account.json
 venv/*
+.vscode
