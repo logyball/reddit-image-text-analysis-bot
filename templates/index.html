@@ -1,0 +1,11 @@
+{% extends "layout.html" %}
+{% block content %}
+    <h2>cs510 Final Project</h2>
+    <h3>Bot Actions</h3>
+    {% for a in actions %}
+        <p>{{ a.action }}</p>
+        {% if a.post_id %}
+            <p>    --{{ a.link }}</p>
+        {% endif %}
+    {% endfor %}
+{% endblock %}
