@@ -5,6 +5,9 @@ import sys
 API_KEY = '0VWvIBB8nWFQGmKKv2OIsjajXurXmQGJ'
 
 def query_giphy(query):
+    """
+    Sends a query to the giphy api to get a random GIPH based on the query paramaters.
+    """
     api_instance = giphy_client.DefaultApi()
     off = random.randint(0,50)
     try:
