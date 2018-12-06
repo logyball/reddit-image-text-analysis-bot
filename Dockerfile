@@ -13,4 +13,4 @@ COPY code/* code/
 
 RUN python code/main.py &
 
-# CMD [ "python", "code/main.py" ]
+CMD [ "python", "code/front_end.py" ]
