@@ -1,14 +1,16 @@
 from os import environ
 from googleMl import googleTextAnalysis, googleImageAnalysis
-import praw, pprint
+from time import time
+from model import model
+import praw, pprint, sqlite3
 
-SUBR = "cs510bottesting" #environ['SUBREDDIT']
-oldPosts = set()    # post IDs that have been addressed already
-
+SUBR = environ['SUBREDDIT']
 USERNAME = environ['BOT_USERNAME']
 PASSWORD = environ['BOT_PASSWORD']
 CLIENT_ID = environ['BOT_CLIENT_ID']
 CLIENT_SECRET = environ['BOT_CLIENT_SECRET']
+
+DB = model()
 
 # reddit API
 def getRedditInstance():
@@ -26,14 +28,18 @@ def isImageOrText(post):
         return "img"
     return None
 
+def makeLinkToPost(post):
+    link = "www.reddit.com" + post.permalink
+    return link
+
 # returns a list of image posts that haven't been visited yet in 
 # the specified subreddit
 def getNewTextOrImagePosts(red):
+    DB.addBotAction("scanning for new posts...")
     newPosts = []
     subRedInstance = red.subreddit(SUBR)
     for post in subRedInstance.new():
-        #pprint.pprint(vars(post))
-        if (post.name not in oldPosts):
+        if not DB.isOldPost(post.name):
             postType = isImageOrText(post)
             if postType is not None:
                 newPosts.append((post, postType))
@@ -42,16 +48,23 @@ def getNewTextOrImagePosts(red):
 # returns list of strings, best guess info based on the 
 # google ML APIs.  Image gets descriptors, text gets tone
 def googleMlWrapper(postData):
-    if postData[1] == "txt":
+    if postData[1] == "txt": 
+        DB.addBotAction("Sending new text post to google NLP ML API...", postId=postData[0].name)
         return googleTextAnalysis(postData[0].selftext)
+    DB.addBotAction("Sending new image post to google vision ML API...", postId=postData[0].name)
     return googleImageAnalysis(postData[0].url)
 
 # takes the new posts and does some logic with them
 # newPosts is a list of posts, posts is a tuple
 # (post Object, postType String)
 def processNewPosts(posts):
+    if len(posts) > 0:
+        DB.addBotAction("New posts found! Processing...")
+    else:
+        return {}
     postsToSend = {}
     for post in posts:
+        vars(post[0]) # make reddit api return all vars
         postInfo = {}
         postInfo['type'] = post[1]
         postInfo['title'] = post[0].title
@@ -59,7 +72,7 @@ def processNewPosts(posts):
         postInfo['url'] = post[0].url
         postInfo['wordList'] = googleMlWrapper(post)
         postsToSend[post[0].name] = postInfo
-        oldPosts.add(post[0].name)
+        DB.addToOldPost(post[0].name, makeLinkToPost(post[0]))
     return postsToSend
 
 # TODO - implement a reply based on the info we have post-processing
@@ -91,7 +104,9 @@ def getNewPostInfo():
 #   thread based on the post-processed info
 def makeReply(postsToReplyTo):
     r = getRedditInstance() # in case we forgot
+    DB.addBotAction("Replying to new posts...")
     for post in postsToReplyTo:
         text = buildReply(postsToReplyTo[post])
         sub = r.submission(id=postsToReplyTo[post]['id'])
-        sub.reply(text)
+        comment = sub.reply(text)
+    DB.addBotAction("Done Replying! Going back to sleep...")
