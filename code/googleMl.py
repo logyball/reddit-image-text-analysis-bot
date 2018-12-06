@@ -6,17 +6,17 @@ import six
 import pprint
 
 # magnitude words
-weakList = ['weakly', 'flimsily', 'lamely', 'unconvincingly']
-moderateList = ['moderately', 'sort of', 'a bit', 'unconvincingly']
-aggroList = ['aggressively', 'forcefully', 'strongly', 'stoutly']
-overList = ['overwhelmingly', 'inconcievably', 'astronomically', 'intensely']
+weakList = ['weakly','lamely']
+moderateList = ['moderately', 'sort of']
+aggroList = ['aggressively', 'forcefully', 'strongly']
+overList = ['intensely']
 
 # positive/negative words
-vBadList = ['miserable', 'agonizing', 'depressed', 'morose']
-badList = ['bad', 'negative', 'gloomy', 'pessimistic']
-neutralList = ['neutral', 'centrist', 'indifferent', 'apathetic']
-posList = ['positive', 'constructive', 'good', 'favorable']
-joyList = ['joyful', 'sublime', 'elation', 'ecstatic']
+vBadList = ['miserable', 'agonizing', 'depressed']
+badList = ['bad', 'negative', 'gloomy',]
+neutralList = ['neutral', 'indifferent', 'apathetic']
+posList = ['positive', 'good', 'favorable']
+joyList = ['joyful', 'sublime', 'ecstatic']
 
 def addMag(mag):
     if (mag <= 0.1):
