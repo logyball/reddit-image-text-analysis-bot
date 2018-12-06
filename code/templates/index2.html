@@ -18,7 +18,7 @@
             <td >{{ a.time }}</td>
             <td>{{ a.action }}</p>
             {% if a.post_id %}
-            <td>{{ a.link }}</td>
+            <td><a href="{{ ''.join(['https://', a.link]) }}">link</a></td>
             {% endif %}
         </tr>
         {% endfor %}
