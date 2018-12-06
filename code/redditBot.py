@@ -2,6 +2,8 @@ from os import environ
 from googleMl import googleTextAnalysis, googleImageAnalysis
 from time import time
 from model import model
+from gify_query import query_giphy
+from query_spotify import get_a_playlist
 import praw, pprint, sqlite3
 
 SUBR = environ['SUBREDDIT']
@@ -28,8 +30,8 @@ def isImageOrText(post):
         return "img"
     return None
 
-def makeLinkToPost(post):
-    link = "www.reddit.com" + post.permalink
+def makeLinkToPost(permalink):
+    link = "www.reddit.com" + permalink
     return link
 
 # returns a list of image posts that haven't been visited yet in 
@@ -66,22 +68,30 @@ def processNewPosts(posts):
     for post in posts:
         vars(post[0]) # make reddit api return all vars
         postInfo = {}
+        postInfo['permalink'] = post[0].permalink
         postInfo['type'] = post[1]
         postInfo['title'] = post[0].title
         postInfo['id'] = post[0].id
         postInfo['url'] = post[0].url
         postInfo['wordList'] = googleMlWrapper(post)
         postsToSend[post[0].name] = postInfo
-        DB.addToOldPost(post[0].name, makeLinkToPost(post[0]))
     return postsToSend
 
-# TODO - implement a reply based on the info we have post-processing
+# implement a reply based on the info we have post-processing
 def buildReply(postInfo):
-    reply = "these are some interesting words:"
-    for w in postInfo['wordList']:
-        reply = reply + " " + w
+    reply = "I've analyzed your post and come up with some interesting words "
+    reply = reply + "based on google's ML APIs.  These words that are relevant are: "
+    for word in postInfo['wordList']:
+        reply = reply + word + " "
+    reply = reply + ". "
+    if postInfo['playlist'] is not None:
+        reply = reply + "Here's a spotify playlist I found based on the query " + postInfo['query'] +": "
+        reply = reply + postInfo['playlist']
+        reply = reply + " . "
+    if postInfo['gif'] is not None:
+        reply = reply + "Here's a gif from Giphy based on the query "+ postInfo['query'] +": "
+        reply = reply + postInfo['gif'] + " ."
     return reply
-    # TODO - incoporate additional logic
 
 # initial logic
 #   Called from outside the module, gets an instance of reddit,
@@ -106,7 +116,12 @@ def makeReply(postsToReplyTo):
     r = getRedditInstance() # in case we forgot
     DB.addBotAction("Replying to new posts...")
     for post in postsToReplyTo:
+        Query = postsToReplyTo[post]['wordList'][1]
+        postsToReplyTo[post]['query'] = Query
+        postsToReplyTo[post]['playlist'] = get_a_playlist(Query)
+        postsToReplyTo[post]['gif'] = query_giphy(Query)
         text = buildReply(postsToReplyTo[post])
         sub = r.submission(id=postsToReplyTo[post]['id'])
         comment = sub.reply(text)
+        DB.addToOldPost(post, makeLinkToPost(postsToReplyTo[post]['permalink']))
     DB.addBotAction("Done Replying! Going back to sleep...")
