@@ -2,7 +2,9 @@ import giphy_client
 from giphy_client.rest import ApiException
 import random
 import sys
-API_KEY = '0VWvIBB8nWFQGmKKv2OIsjajXurXmQGJ'
+import os
+API_KEY = environ['GIPHY_KEY']
+
 
 def query_giphy(query):
     """
