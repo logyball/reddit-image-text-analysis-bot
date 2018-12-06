@@ -19,7 +19,7 @@ def index():
         i['time'] = time.gmtime(i['time'])
         timeString = time.strftime('%m/%d/%Y -- %H:%M:%S', i['time'] )
         i['time'] = timeString
-    return render_template('index2.html', actions=actions)
+    return render_template('index.html', actions=actions)
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=8000, debug=True)
