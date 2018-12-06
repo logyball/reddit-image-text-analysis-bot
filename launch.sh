@@ -14,11 +14,9 @@
 [ -z "$GIPHY_KEY" ] && GIPHY_KEY="CHANGEME"
 ### GOOGLE ML
 [ -z "$GOOGLE_ACCOUNT_CREDENTIALS" ] && GOOGLE_ACCOUNT_CREDENTIALS="PATH_TO_SERVICE_ACCT_JSON"
-### install python if it doesn't already exist
-apt update && apt install python3
-## get required packages
+
+### install requirements
+apt update && apt install python
 pip install -r requirements.txt
-## run reddit bot in the background
-python3 ./code/redditBot.py &
-## run flask app in the foreground
-python3 ./code/front_end.py
+python ./code/redditBot.py & # background
+python ./code/front_end.py
