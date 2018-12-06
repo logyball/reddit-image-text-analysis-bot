@@ -12,6 +12,8 @@
 [ -z "$SPOTIFY_CLIENT_SECRET" ] && SPOTIFY_CLIENT_SECRET="CHANGEME"
 ### GIPHY
 [ -z "$GIPHY_KEY" ] && GIPHY_KEY="CHANGEME"
+### GOOGLE ML
+[ -z "$GOOGLE_ACCOUNT_CREDENTIALS" ] && GOOGLE_ACCOUNT_CREDENTIALS="PATH_TO_SERVICE_ACCT_JSON"
 
 ## run reddit bot in the background
 python3 ./code/redditBot.py &
