@@ -1,18 +1,32 @@
 from google.cloud import vision, language
 from google.cloud.language import enums
 from google.cloud.language import types
+from random import choice
 import six
 import pprint
 
+# magnitude words
+weakList = ['weakly', 'flimsily', 'lamely', 'unconvincingly']
+moderateList = ['moderately', 'sort of', 'a bit', 'unconvincingly']
+aggroList = ['aggressively', 'forcefully', 'strongly', 'stoutly']
+overList = ['overwhelmingly', 'inconcievably', 'astronomically', 'intensely']
+
+# positive/negative words
+vBadList = ['miserable', 'agonizing', 'depressed', 'morose']
+badList = ['bad', 'negative', 'gloomy', 'pessimistic']
+neutralList = ['neutral', 'centrist', 'indifferent', 'apathetic']
+posList = ['positive', 'constructive', 'good', 'favorable']
+joyList = ['joyful', 'sublime', 'elation', 'ecstatic']
+
 def addMag(mag):
     if (mag <= 0.1):
-        return "weakly"
+        return choice(weakList)
     elif (mag <= 0.35):
-        return "moderately"
+        return choice(moderateList)
     elif (mag <= 0.5):
-        return "aggressively"
+        return choice(aggroList)
     else:
-        return "overwhelmingly"
+        return choice(overList)
 
 def mapTextToEmotion(sentiment):
     tone = []
@@ -21,19 +35,19 @@ def mapTextToEmotion(sentiment):
     tone.append(addMag(mag))
     # very negative
     if score < -0.6:
-        tone.append('miserable')
+        tone.append(choice(vBadList))
     # weakly negative
     elif score < -0.1:
-        tone.append('negative')
+        tone.append(choice(badList))
     # nuetral
     elif score < 0.1:
-        tone.append('nuetral')
+        tone.append(choice(neutralList))
     # weakly postiive
     elif score < 0.6:
-        tone.append('positive')
+        tone.append(choice(posList))
     # very positive
     else:
-        tone.append('ecstatic')
+        tone.append(choice(joyList))
     return tone
 
 def googleTextAnalysis(text):
