@@ -16,7 +16,7 @@
 [ -z "$GOOGLE_ACCOUNT_CREDENTIALS" ] && GOOGLE_ACCOUNT_CREDENTIALS="PATH_TO_SERVICE_ACCT_JSON"
 
 ### install requirements
-apt update && apt install python
+apt update && apt install python python-pip
 pip install -r requirements.txt
 python ./code/redditBot.py & # background
 python ./code/front_end.py
