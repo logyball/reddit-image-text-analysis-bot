@@ -28,37 +28,6 @@ def isImageOrText(post):
         return "img"
     return None
 
-"""
-# add the bot's action at a time to the db
-def addBotAction(action):
-    connection = sqlite3.connect(DB_FILE)
-    cursor = connection.cursor()
-    intTime = int(time())
-    cursor.execute("insert into botActions(actionTime, action) VALUES (?, ?)", (intTime, action))
-    connection.commit()
-    cursor.close()
-
-# returns true if post is already in database
-def isOldPost(postId):
-    connection = sqlite3.connect(DB_FILE)
-    cursor = connection.cursor()
-    cursor.execute("SELECT * FROM processedPosts WHERE postName = '%s'" % postId)
-    row = cursor.fetchone()
-    if row is not None:
-        cursor.close()
-        return True
-    cursor.close()
-    return False
-
-# adds a processed post to the db
-def addToOldPosts(postId):
-    connection = sqlite3.connect(DB_FILE)
-    cursor = connection.cursor()
-    cursor.execute("insert into processedPosts(postName) VALUES (?)", (postId,))
-    connection.commit()
-    cursor.close()
-"""
-
 def makeLinkToPost(post):
     link = "www.reddit.com" + post.permalink
     return link
