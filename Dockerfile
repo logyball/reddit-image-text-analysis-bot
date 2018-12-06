@@ -2,10 +2,9 @@ FROM alpine:latest
 
 RUN apk add --update \
     python \
-    libpython-dev \
     python-dev \
     py-pip \
-    && pip install --upgrade setuptools  praw google-cloud-vision google-cloud-language
+    && pip install --upgrade setuptools praw google-cloud-vision google-cloud-language flask spotipy giphy_client
 
 RUN mkdir code
 
