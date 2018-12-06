@@ -1,0 +1,6 @@
+flask
+praw
+google-cloud-language
+google-cloud-vision
+spotipy
+giphy_client

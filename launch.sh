@@ -15,6 +15,12 @@
 ### GOOGLE ML
 [ -z "$GOOGLE_ACCOUNT_CREDENTIALS" ] && GOOGLE_ACCOUNT_CREDENTIALS="PATH_TO_SERVICE_ACCT_JSON"
 
+### install python if it doesn't already exist
+apt update && apt install python3
+
+## get required packages
+pip install -r requirements.txt
+
 ## run reddit bot in the background
 python3 ./code/redditBot.py &
 
