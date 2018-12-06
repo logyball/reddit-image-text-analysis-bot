@@ -3,8 +3,8 @@ from spotipy.oauth2 import SpotifyClientCredentials
 import json
 from os import environ
 import random
-CLIENT_ID=environ[SPOTIFY_CLIENT_ID]
-CLIENT_SECRET=environ[SPOTIFY_CLIENT_SECRET]
+CLIENT_ID=environ['SPOTIFY_CLIENT_ID']
+CLIENT_SECRET=environ['SPOTIFY_CLIENT_SECRET']
 
 def get_a_playlist(query):
     #This function will return a link to a spotify playlist given query parmaters
