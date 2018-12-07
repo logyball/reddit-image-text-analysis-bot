@@ -19,6 +19,10 @@ posList = ['positive', 'good', 'favorable']
 joyList = ['joyful', 'sublime', 'ecstatic']
 
 def addMag(mag):
+    """
+    Based on a passed-in magnitude value, return a word from
+    the appropriate list 
+    """
     if (mag <= 0.1):
         return choice(weakList)
     elif (mag <= 0.35):
@@ -29,6 +33,10 @@ def addMag(mag):
         return choice(overList)
 
 def mapTextToEmotion(sentiment):
+    """
+    Given a Google NLP sentiment analysis, translate into human-readable 
+    format with a modifier and an emotion
+    """
     tone = []
     score = sentiment.score
     mag = sentiment.magnitude
@@ -51,6 +59,9 @@ def mapTextToEmotion(sentiment):
     return tone
 
 def googleTextAnalysis(text):
+    """
+    Wrapper for the google NLP Sentiment Analysis API
+    """
     client = language.LanguageServiceClient()
     if isinstance(text, six.binary_type):
         text = text.decode('utf-8')
@@ -59,6 +70,9 @@ def googleTextAnalysis(text):
     return mapTextToEmotion(sentiment)
 
 def googleImageAnalysis(url):
+    """
+    Wrapper for the google Vision image analysis API
+    """
     client = vision.ImageAnnotatorClient()
     image = vision.types.Image()
     image.source.image_uri = url

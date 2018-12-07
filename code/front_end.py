@@ -15,7 +15,7 @@ def index():
     """
     actions = [dict(post_id=row[0], action=row[1], time=row[2], link=row[4]) for row in db.select()]
     
-    for i in actions:
+    for i in actions[::-1]:
         i['time'] = time.gmtime(i['time'])
         timeString = time.strftime('%m/%d/%Y -- %H:%M:%S', i['time'] )
         i['time'] = timeString

@@ -16,6 +16,10 @@ DB = model()
 
 # reddit API
 def getRedditInstance():
+    """
+    Returns an Reddit object for interaction with the
+    Reddit API via praw
+    """
     return praw.Reddit(client_id=CLIENT_ID,
                        client_secret=CLIENT_SECRET,
                        username=USERNAME,
@@ -24,6 +28,10 @@ def getRedditInstance():
 
 # returns whether or not the posted url is a image
 def isImageOrText(post):
+    """
+    Given a reddit post, returns whether or not it is 
+    an image, text post, or neither
+    """
     if post.is_self:
         return "txt"
     elif (post.post_hint is not None) and (post.post_hint == 'image'):
@@ -31,12 +39,19 @@ def isImageOrText(post):
     return None
 
 def makeLinkToPost(permalink):
+    """
+    Translates a reddit post into a real URL
+    """
     link = "www.reddit.com" + permalink
     return link
 
 # returns a list of image posts that haven't been visited yet in 
 # the specified subreddit
 def getNewTextOrImagePosts(red):
+    """
+    Given an instance of Reddit, scan a particular subreddit
+    for new posts that the bot hasn't seen yet
+    """
     DB.addBotAction("scanning for new posts...")
     newPosts = []
     subRedInstance = red.subreddit(SUBR)
@@ -50,6 +65,10 @@ def getNewTextOrImagePosts(red):
 # returns list of strings, best guess info based on the 
 # google ML APIs.  Image gets descriptors, text gets tone
 def googleMlWrapper(postData):
+    """
+    Calls the correct google API (vision or sentiment) based
+    on post type
+    """
     if postData[1] == "txt": 
         DB.addBotAction("Sending new text post to google NLP ML API...", postId=postData[0].name)
         return googleTextAnalysis(postData[0].selftext)
@@ -60,6 +79,10 @@ def googleMlWrapper(postData):
 # newPosts is a list of posts, posts is a tuple
 # (post Object, postType String)
 def processNewPosts(posts):
+    """
+    Wrapper to get all the new posts that we're looking for
+    and do some actions with them
+    """
     if len(posts) > 0:
         DB.addBotAction("New posts found! Processing...")
     else:
@@ -79,6 +102,10 @@ def processNewPosts(posts):
 
 # implement a reply based on the info we have post-processing
 def buildReply(postInfo):
+    """
+    After processing the posts, come up with a relevant
+    reply for the bot to comment on
+    """
     reply = "I've analyzed your post and come up with some interesting words "
     reply = reply + "based on google's ML APIs.  These words that are relevant are: "
     for word in postInfo['wordList']:
@@ -105,6 +132,10 @@ def buildReply(postInfo):
 #   where wordList is either a list of image descriptors (image post)
 #   or a list of words describing the tone of the text (text post)
 def getNewPostInfo():
+    """
+    Get the new posts (since last time bot ran) and metadata
+    about them
+    """
     r = getRedditInstance()
     np = getNewTextOrImagePosts(r)
     return processNewPosts(np)
@@ -113,6 +144,9 @@ def getNewPostInfo():
 #   After all the proocessing of each post, post a reply to each 
 #   thread based on the post-processed info
 def makeReply(postsToReplyTo):
+    """
+    Replies to the new posts
+    """
     r = getRedditInstance() # in case we forgot
     DB.addBotAction("Replying to new posts...")
     for post in postsToReplyTo:
