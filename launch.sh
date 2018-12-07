@@ -18,5 +18,5 @@
 ### install requirements
 apt update && apt install python python-pip
 pip install -r requirements.txt
-python ./code/main.py & 
-python ./code/front_end.py &
+nohup python ./code/main.py & 
+nohup python ./code/front_end.py &
